@@ -38,7 +38,7 @@ login_manager.login_message_category = "warning"
 # Import after initializing db to avoid circular imports
 from models import User, URLAnalysis
 from forms import LoginForm, RegistrationForm, URLCheckForm
-from utils import is_valid_url, extract_features, is_whitelisted_domain
+from utils import is_valid_url, extract_features, is_whitelisted_domain, analyze_website_content
 from machine_learning.ensemble_model import EnsembleModel
 
 # Initialize machine learning model
