@@ -35,7 +35,7 @@ login_manager.login_view = 'login'
 # Import after initializing db to avoid circular imports
 from models import User, URLAnalysis
 from forms import LoginForm, RegistrationForm, URLCheckForm
-from utils import is_valid_url, extract_features
+from utils import is_valid_url, extract_features, is_whitelisted_domain
 from machine_learning.ensemble_model import EnsembleModel
 
 # Initialize machine learning model
@@ -102,9 +102,20 @@ def check_url():
     if form.validate_on_submit():
         url = form.url.data
         try:
-            # Extract features and make prediction
-            features = extract_features(url)
-            is_phishing, probability, feature_importance = phishing_detector.predict(features)
+            # Parse the URL to get the domain
+            parsed_url = urlparse(url)
+            domain = parsed_url.netloc
+            
+            # Check if domain is in whitelist before full processing
+            domain_whitelisted = is_whitelisted_domain(domain)
+            if domain_whitelisted:
+                app.logger.info(f"URL {url} contains a whitelisted domain, skipping ML prediction")
+                is_phishing = False
+                probability = 0.1  # Very low probability for whitelisted domains
+            else:
+                # Extract features and make prediction using ML model
+                features = extract_features(url)
+                is_phishing, probability, feature_importance = phishing_detector.predict(features)
             
             # Store analysis result
             analysis = URLAnalysis(
@@ -112,7 +123,7 @@ def check_url():
                 user_id=current_user.id,
                 is_phishing=is_phishing,
                 confidence_score=probability,
-                features=str(features)
+                features=str(extract_features(url))  # Always store full features
             )
             db.session.add(analysis)
             db.session.commit()
@@ -123,7 +134,8 @@ def check_url():
                 'is_phishing': is_phishing,
                 'classification_confidence': f"{probability:.2f}%",
                 'risk_score': "High Risk" if is_phishing else "Low Risk",
-                'features': features
+                'features': extract_features(url),
+                'whitelisted': domain_whitelisted
             }
             
             # Different templates for phishing vs. safe sites
