@@ -1,5 +1,6 @@
 import os
 import logging
+from urllib.parse import urlparse
 from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -163,9 +164,23 @@ def analyze():
         if not is_valid_url(url):
             return render_template('index.html', error='Invalid URL format. Please enter a valid URL.')
         
-        # Extract features and make prediction
+        # Parse the URL to get the domain
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc
+        
+        # Check if domain is in whitelist before full processing
+        domain_whitelisted = is_whitelisted_domain(domain)
+        if domain_whitelisted:
+            app.logger.info(f"URL {url} contains a whitelisted domain, skipping ML prediction")
+            is_phishing = False
+            probability = 0.1  # Very low probability for whitelisted domains
+        else:
+            # Extract features and make prediction using ML model
+            features = extract_features(url)
+            is_phishing, probability, feature_importance = phishing_detector.predict(features)
+        
+        # Always extract features for storage, even if we skipped prediction
         features = extract_features(url)
-        is_phishing, probability, feature_importance = phishing_detector.predict(features)
         
         # Store analysis result
         analysis = URLAnalysis(
@@ -184,7 +199,8 @@ def analyze():
             'is_phishing': is_phishing,
             'classification_confidence': f"{probability:.2f}%",
             'risk_score': "High Risk" if is_phishing else "Low Risk",
-            'features': features
+            'features': features,
+            'whitelisted': domain_whitelisted
         }
         
         # Different templates for phishing vs. safe sites
