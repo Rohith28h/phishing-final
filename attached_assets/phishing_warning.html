@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center" style="background-color: red; color: white; padding: 20px;">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">⚠️ WARNING: This is a Phishing Website!</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Potential Phishing URL Detected!</h4>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Analyzed URL:</h5>
+                    <p class="text-break">{{ result.url }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Risk Score:</h5>
+                    <p>{{ result.risk_score }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Classification Confidence:</h5>
+                    <p>{{ result.classification_confidence }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Feature Analysis:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for feature, value in result.features.items() %}
+                                <tr>
+                                    <td>{{ feature|replace('_', ' ')|title }}</td>
+                                    <td>{{ value }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Analyze Another URL
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

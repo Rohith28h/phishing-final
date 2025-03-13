@@ -1,0 +1,45 @@
+Create a detailed plan for a phishing detection project using the following modules:
+
+**Module 1: Data Collection**  
+- Obtain a dataset with URLs categorized as phishing or legitimate for training and testing the models. Sources include Kaggle and UC.  
+- Feature extraction from URLs using Python packages:  
+  - **Pandas**: For loading, managing, and analyzing datasets.  
+  - **Numpy**: For numerical operations and data manipulation.  
+  - **Requests**: To fetch data from URLs if needed.  
+  - **Re (Regular Expressions)**: For pattern matching in URLs.  
+
+**Module 2: Data Preprocessing**  
+- Clean and preprocess the extracted features to prepare them for model training. This may involve:  
+  - Handling missing values.  
+  - Encoding categorical variables.  
+  - Normalizing numerical features.  
+- Use **Scikit-Learn** for encoding, normalization, and preprocessing tasks.  
+- Use **Numpy** for efficient numerical operations and **Pandas** for handling missing values and basic data manipulation.  
+
+**Module 3: Model Training**  
+- Train different machine learning models using the preprocessed dataset. Common models include:  
+  - **Logistic Regression**: A statistical technique for binary classification tasks.  
+    - Sigmoid Function: y = β0X0 + β1X1 + β2X2 + ... + βn*Xn  
+  - **Support Vector Machine (SVM)**: A supervised learning algorithm for classification and regression.  
+    - Use: `from sklearn.svm import SVC`  
+  - **Random Forest**: An ensemble learning method for classification and regression problems.  
+
+**Module 4: Model Evaluation**  
+- Use Scikit-Learn to calculate performance metrics such as:  
+  - Accuracy  
+  - Precision  
+  - Recall  
+  - F1-Score for each trained model.  
+- Model Selection: Compare evaluation metrics across models and select the one with the highest overall performance (e.g., Random Forest).  
+
+**Module 5: Web Development**  
+- Use core web technologies:  
+  - **HTML**: HTML5 (latest standard).  
+  - **CSS**: CSS3 (latest features like Flexbox, Grid, etc.).  
+  - **JavaScript**: ECMAScript 2022 (ES12), with new features like optional chaining, nullish coalescing, etc.  
+- **Flask**: Use Flask 3.1.0 (latest stable version as of 2024) for web application development.  
+
+**Additional Resources**:  
+- For further guidance, refer to this video: [Phishing Detection Project](https://www.youtube.com/watch?v=MVSnUOSQ8Hs&t=551s).  
+
+Ensure the language is simple and direct.
