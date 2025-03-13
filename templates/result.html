@@ -75,6 +75,91 @@
                     </div>
                 </div>
 
+                {% if result.content_analysis %}
+                <div class="mb-4">
+                    <h5>Content Analysis:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Indicator</th>
+                                    <th>Status</th>
+                                    <th>Security Implication</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Login Form Present</td>
+                                    <td>
+                                        {% if result.content_analysis.login_form_present %}
+                                        <span class="badge bg-warning text-dark">Yes</span>
+                                        {% else %}
+                                        <span class="badge bg-success">No</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Sites with login forms should be scrutinized carefully</td>
+                                </tr>
+                                <tr>
+                                    <td>Password Field Present</td>
+                                    <td>
+                                        {% if result.content_analysis.password_field_present %}
+                                        <span class="badge bg-warning text-dark">Yes</span>
+                                        {% else %}
+                                        <span class="badge bg-success">No</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Password fields should only appear on secure (HTTPS) pages</td>
+                                </tr>
+                                <tr>
+                                    <td>SSL/Security Seals</td>
+                                    <td>
+                                        {% if result.content_analysis.ssl_seal_present %}
+                                        <span class="badge bg-info">Present</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Absent</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Presence of security seals may be legitimate or could be fake in phishing sites</td>
+                                </tr>
+                                <tr>
+                                    <td>Brand Mismatch</td>
+                                    <td>
+                                        {% if result.content_analysis.brand_mismatch %}
+                                        <span class="badge bg-danger">Detected</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Not Detected</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>When content mentions a brand not in the domain - often a phishing sign</td>
+                                </tr>
+                                <tr>
+                                    <td>Security Terms</td>
+                                    <td>
+                                        {% if result.content_analysis.security_indicators %}
+                                        <span class="badge bg-info">Present</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Absent</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Presence of terms like "secure", "protected", or "verified"</td>
+                                </tr>
+                                <tr>
+                                    <td>Legitimate External Links</td>
+                                    <td>
+                                        {% if result.content_analysis.legitimate_links %}
+                                        <span class="badge bg-success">Present</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Absent</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Legitimate sites often link to established platforms</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="text-center">
                     <a href="{{ url_for('check_url') }}" class="btn btn-primary">
                         <i class="bi bi-arrow-left"></i> Check Another URL

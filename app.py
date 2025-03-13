@@ -115,10 +115,43 @@ def check_url():
                 app.logger.info(f"URL {url} contains a whitelisted domain, skipping ML prediction")
                 is_phishing = False
                 probability = 0.1  # Very low probability for whitelisted domains
+                features = extract_features(url)  # Still need features for storage
             else:
                 # Extract features and make prediction using ML model
                 features = extract_features(url)
                 is_phishing, probability, feature_importance = phishing_detector.predict(features)
+                
+                # Perform additional content analysis for non-whitelisted domains
+                # This can help catch phishing sites that might slip through ML detection
+                content_features = analyze_website_content(url)
+                app.logger.info(f"Content analysis for {url}: {content_features}")
+                
+                # If ML says it's not phishing but content analysis shows suspicious indicators,
+                # adjust the probability and potentially flag as phishing
+                if not is_phishing:
+                    suspicious_indicators = 0
+                    
+                    # Check for highly suspicious combinations
+                    if content_features['login_form_present'] and content_features['brand_mismatch']:
+                        suspicious_indicators += 2
+                        app.logger.warning(f"Suspicious: Login form with brand mismatch on {url}")
+                    
+                    if content_features['password_field_present'] and not url.startswith('https'):
+                        suspicious_indicators += 2
+                        app.logger.warning(f"Suspicious: Password field without HTTPS on {url}")
+                        
+                    if content_features['ssl_seal_present'] and not content_features['security_indicators']:
+                        suspicious_indicators += 1
+                        app.logger.warning(f"Suspicious: SSL seal without proper security indicators on {url}")
+                    
+                    # Only override if multiple suspicious indicators are found
+                    if suspicious_indicators >= 3:
+                        app.logger.warning(f"Content analysis override: Marking {url} as phishing based on content indicators")
+                        is_phishing = True
+                        probability = max(probability, 0.75)  # At least 75% confidence
+                    elif suspicious_indicators > 0:
+                        # Increase probability but don't necessarily mark as phishing
+                        probability = max(probability, 0.5)  # At least 50% confidence
             
             # Store analysis result
             analysis = URLAnalysis(
@@ -126,19 +159,27 @@ def check_url():
                 user_id=current_user.id,
                 is_phishing=is_phishing,
                 confidence_score=probability,
-                features=str(extract_features(url))  # Always store full features
+                features=str(features)
             )
             db.session.add(analysis)
             db.session.commit()
+            
+            # Get real-time content analysis for result display
+            try:
+                content_analysis = analyze_website_content(url)
+            except Exception as e:
+                app.logger.error(f"Error in content analysis: {e}")
+                content_analysis = {}
             
             # Prepare result for template
             result = {
                 'url': url,
                 'is_phishing': is_phishing,
-                'classification_confidence': f"{probability:.2f}%",
+                'classification_confidence': f"{probability*100:.2f}%",
                 'risk_score': "High Risk" if is_phishing else "Low Risk",
-                'features': extract_features(url),
-                'whitelisted': domain_whitelisted
+                'features': features,
+                'whitelisted': domain_whitelisted,
+                'content_analysis': content_analysis
             }
             
             # Different templates for phishing vs. safe sites
@@ -176,13 +217,43 @@ def analyze():
             app.logger.info(f"URL {url} contains a whitelisted domain, skipping ML prediction")
             is_phishing = False
             probability = 0.1  # Very low probability for whitelisted domains
+            features = extract_features(url)  # Still need features for storage
         else:
             # Extract features and make prediction using ML model
             features = extract_features(url)
             is_phishing, probability, feature_importance = phishing_detector.predict(features)
-        
-        # Always extract features for storage, even if we skipped prediction
-        features = extract_features(url)
+            
+            # Perform additional content analysis for non-whitelisted domains
+            # This can help catch phishing sites that might slip through ML detection
+            content_features = analyze_website_content(url)
+            app.logger.info(f"Content analysis for {url}: {content_features}")
+            
+            # If ML says it's not phishing but content analysis shows suspicious indicators,
+            # adjust the probability and potentially flag as phishing
+            if not is_phishing:
+                suspicious_indicators = 0
+                
+                # Check for highly suspicious combinations
+                if content_features['login_form_present'] and content_features['brand_mismatch']:
+                    suspicious_indicators += 2
+                    app.logger.warning(f"Suspicious: Login form with brand mismatch on {url}")
+                
+                if content_features['password_field_present'] and not url.startswith('https'):
+                    suspicious_indicators += 2
+                    app.logger.warning(f"Suspicious: Password field without HTTPS on {url}")
+                    
+                if content_features['ssl_seal_present'] and not content_features['security_indicators']:
+                    suspicious_indicators += 1
+                    app.logger.warning(f"Suspicious: SSL seal without proper security indicators on {url}")
+                
+                # Only override if multiple suspicious indicators are found
+                if suspicious_indicators >= 3:
+                    app.logger.warning(f"Content analysis override: Marking {url} as phishing based on content indicators")
+                    is_phishing = True
+                    probability = max(probability, 0.75)  # At least 75% confidence
+                elif suspicious_indicators > 0:
+                    # Increase probability but don't necessarily mark as phishing
+                    probability = max(probability, 0.5)  # At least 50% confidence 
         
         # Store analysis result
         analysis = URLAnalysis(
@@ -195,14 +266,22 @@ def analyze():
         db.session.add(analysis)
         db.session.commit()
         
+        # Get real-time content analysis for result display
+        try:
+            content_analysis = analyze_website_content(url)
+        except Exception as e:
+            app.logger.error(f"Error in content analysis: {e}")
+            content_analysis = {}
+        
         # Prepare result for template
         result = {
             'url': url,
             'is_phishing': is_phishing,
-            'classification_confidence': f"{probability:.2f}%",
+            'classification_confidence': f"{probability*100:.2f}%",
             'risk_score': "High Risk" if is_phishing else "Low Risk",
             'features': features,
-            'whitelisted': domain_whitelisted
+            'whitelisted': domain_whitelisted,
+            'content_analysis': content_analysis
         }
         
         # Different templates for phishing vs. safe sites
@@ -221,6 +300,100 @@ def analyze():
 def create_tables():
     with app.app_context():
         db.create_all()
+
+# API endpoint for external service integration
+@app.route('/api/analyze', methods=['POST'])
+@login_required
+def api_analyze():
+    data = request.get_json()
+    
+    if not data or 'url' not in data:
+        return jsonify({
+            'error': 'Missing URL parameter',
+            'status': 'error'
+        }), 400
+    
+    url = data['url']
+    
+    try:
+        if not is_valid_url(url):
+            return jsonify({
+                'error': 'Invalid URL format',
+                'status': 'error'
+            }), 400
+        
+        # Parse the URL
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc
+        
+        # Check whitelist first
+        domain_whitelisted = is_whitelisted_domain(domain)
+        if domain_whitelisted:
+            app.logger.info(f"API: URL {url} contains a whitelisted domain, skipping ML prediction")
+            is_phishing = False
+            probability = 0.05
+            features = extract_features(url)
+            content_features = {}
+        else:
+            # Extract features and run ML prediction
+            features = extract_features(url)
+            is_phishing, probability, feature_importance = phishing_detector.predict(features)
+            
+            # Run content analysis for more accurate results
+            content_features = analyze_website_content(url)
+            
+            # Potentially override ML result based on content analysis
+            if not is_phishing:
+                suspicious_indicators = 0
+                
+                if content_features['login_form_present'] and content_features['brand_mismatch']:
+                    suspicious_indicators += 2
+                
+                if content_features['password_field_present'] and not url.startswith('https'):
+                    suspicious_indicators += 2
+                    
+                if content_features['ssl_seal_present'] and not content_features['security_indicators']:
+                    suspicious_indicators += 1
+                
+                if suspicious_indicators >= 3:
+                    is_phishing = True
+                    probability = max(probability, 0.8)
+                elif suspicious_indicators > 0:
+                    probability = max(probability, 0.5)
+        
+        # Store the analysis in database
+        analysis = URLAnalysis(
+            url=url,
+            user_id=current_user.id,
+            is_phishing=is_phishing,
+            confidence_score=probability,
+            features=str(features)
+        )
+        db.session.add(analysis)
+        db.session.commit()
+        
+        # Return structured API response
+        result = {
+            'url': url,
+            'is_phishing': is_phishing,
+            'confidence': round(probability * 100, 2),
+            'risk_level': 'high' if is_phishing else 'low',
+            'whitelisted': domain_whitelisted,
+            'analysis_time': datetime.utcnow().isoformat(),
+            'content_analysis': content_features
+        }
+        
+        return jsonify({
+            'status': 'success',
+            'result': result
+        })
+        
+    except Exception as e:
+        app.logger.error(f"API error analyzing URL: {e}")
+        return jsonify({
+            'error': str(e),
+            'status': 'error'
+        }), 500
 
 # Create tables at startup
 create_tables()

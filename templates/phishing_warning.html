@@ -80,6 +80,80 @@
                     </div>
                 </div>
 
+                {% if result.content_analysis %}
+                <div class="mb-4">
+                    <h5>Content-Based Detection Results:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Suspicious Indicator</th>
+                                    <th>Status</th>
+                                    <th>Security Concern</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Login Form Present</td>
+                                    <td>
+                                        {% if result.content_analysis.login_form_present %}
+                                        <span class="badge bg-danger">Detected</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Not Detected</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Phishing sites often contain login forms to steal credentials</td>
+                                </tr>
+                                <tr>
+                                    <td>Password Field Present</td>
+                                    <td>
+                                        {% if result.content_analysis.password_field_present %}
+                                        <span class="badge bg-danger">Detected</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Not Detected</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Password fields on suspicious sites are used to steal credentials</td>
+                                </tr>
+                                <tr>
+                                    <td>Brand Mismatch</td>
+                                    <td>
+                                        {% if result.content_analysis.brand_mismatch %}
+                                        <span class="badge bg-danger">Critical Issue</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Not Detected</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Content mentions trusted brands but domain doesn't match</td>
+                                </tr>
+                                <tr>
+                                    <td>Fake Security Indicators</td>
+                                    <td>
+                                        {% if result.content_analysis.ssl_seal_present and not result.content_analysis.security_indicators %}
+                                        <span class="badge bg-danger">Likely Fake</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Not Detected</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Phishing sites often display fake security badges or seals</td>
+                                </tr>
+                                <tr>
+                                    <td>Insecure Password Collection</td>
+                                    <td>
+                                        {% if result.content_analysis.password_field_present and not result.url.startswith('https') %}
+                                        <span class="badge bg-danger">Critical Issue</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Not Applicable</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>Collecting passwords without HTTPS is a major security issue</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="alert alert-warning">
                     <h5>Recommendations:</h5>
                     <ul>
@@ -87,6 +161,12 @@
                         <li>Do not download files from this website</li>
                         <li>If you arrived here by clicking a link, be suspicious of the source</li>
                         <li>Report this URL to your IT department if accessed at work</li>
+                        {% if result.content_analysis and result.content_analysis.brand_mismatch %}
+                        <li><strong>Brand Impersonation Detected:</strong> This site appears to be impersonating a trusted brand</li>
+                        {% endif %}
+                        {% if result.content_analysis and result.content_analysis.password_field_present %}
+                        <li><strong>Credential Theft Attempt:</strong> This site is attempting to collect credentials</li>
+                        {% endif %}
                     </ul>
                 </div>
 
