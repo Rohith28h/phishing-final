@@ -175,7 +175,7 @@ def check_url():
             result = {
                 'url': url,
                 'is_phishing': is_phishing,
-                'classification_confidence': f"{probability*100:.2f}%",
+                'classification_confidence': f"{probability*100:.2f}%" if probability <= 1 else f"{probability:.2f}%",
                 'risk_score': "High Risk" if is_phishing else "Low Risk",
                 'features': features,
                 'whitelisted': domain_whitelisted,
@@ -277,7 +277,7 @@ def analyze():
         result = {
             'url': url,
             'is_phishing': is_phishing,
-            'classification_confidence': f"{probability*100:.2f}%",
+            'classification_confidence': f"{probability*100:.2f}%" if probability <= 1 else f"{probability:.2f}%",
             'risk_score': "High Risk" if is_phishing else "Low Risk",
             'features': features,
             'whitelisted': domain_whitelisted,
@@ -376,7 +376,7 @@ def api_analyze():
         result = {
             'url': url,
             'is_phishing': is_phishing,
-            'confidence': round(probability * 100, 2),
+            'confidence': round(probability * 100, 2) if probability <= 1 else round(probability, 2),
             'risk_level': 'high' if is_phishing else 'low',
             'whitelisted': domain_whitelisted,
             'analysis_time': datetime.utcnow().isoformat(),
