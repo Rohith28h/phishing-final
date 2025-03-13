@@ -1,0 +1,82 @@
+/* Additional custom styles */
+
+/* Styles for phishing warning page */
+.phishing-warning {
+    background-color: red;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.phishing-warning h2 {
+    font-weight: bold;
+}
+
+.phishing-warning .alert {
+    margin-bottom: 20px;
+}
+
+.card {
+    border-radius: 10px;
+    border: 1px solid var(--bs-border-color);
+}
+
+.card-header {
+    background-color: var(--bs-dark);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: var(--bs-dark);
+    border-top: 1px solid var(--bs-border-color);
+}
+
+main {
+    margin-bottom: 100px;
+}
+
+.table {
+    background-color: var(--bs-dark);
+}
+
+/* Animated security icon */
+.security-icon {
+    animation: pulse 2s infinite;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Custom card for results */
+.result-card {
+    transition: all 0.3s ease;
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Safe result indicator */
+.safe-indicator {
+    color: #28a745;
+}
+
+/* Phishing result indicator */
+.phishing-indicator {
+    color: #dc3545;
+}

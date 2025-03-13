@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card phishing-warning">
+            <div class="card-header">
+                <h2 class="text-center">⚠️ WARNING: This is a Phishing Website!</h2>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger" role="alert">
+                    <h4 class="alert-heading">Potential Phishing URL Detected!</h4>
+                    <p>This URL has been identified as likely malicious. Please exercise caution.</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Analyzed URL:</h5>
+                    <p class="text-break">{{ result.url }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Risk Score:</h5>
+                    <p>{{ result.risk_score }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Classification Confidence:</h5>
+                    <p>{{ result.classification_confidence }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Feature Analysis:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Value</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for feature, value in result.features.items() %}
+                                <tr>
+                                    <td>{{ feature|replace('_', ' ')|title }}</td>
+                                    <td>{{ value }}</td>
+                                    <td>
+                                        {% if feature == 'having_IP_Address' %}
+                                        Whether the URL contains an IP address
+                                        {% elif feature == 'URL_Length' %}
+                                        Length of the URL (1 if long, -1 if normal)
+                                        {% elif feature == 'Shortining_Service' %}
+                                        Whether the URL uses a shortening service
+                                        {% elif feature == 'having_At_Symbol' %}
+                                        Whether the URL contains '@' symbol
+                                        {% elif feature == 'double_slash_redirecting' %}
+                                        Presence of '//' in URL
+                                        {% elif feature == 'Prefix_Suffix' %}
+                                        Presence of '-' in domain
+                                        {% elif feature == 'having_Sub_Domain' %}
+                                        Number of subdomains
+                                        {% elif feature == 'SSLfinal_State' %}
+                                        Whether the site uses HTTPS
+                                        {% elif feature == 'Domain_registeration_length' %}
+                                        Age of the domain
+                                        {% elif feature == 'Favicon' %}
+                                        Whether favicon loads from same domain
+                                        {% elif feature == 'port' %}
+                                        Whether URL uses standard port
+                                        {% elif feature == 'HTTPS_token' %}
+                                        Whether 'https' appears in domain part
+                                        {% else %}
+                                        Additional security indicator
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h5>Recommendations:</h5>
+                    <ul>
+                        <li>Do not enter any personal information on this website</li>
+                        <li>Do not download files from this website</li>
+                        <li>If you arrived here by clicking a link, be suspicious of the source</li>
+                        <li>Report this URL to your IT department if accessed at work</li>
+                    </ul>
+                </div>
+
+                <div class="text-center">
+                    <a href="{{ url_for('check_url') }}" class="btn btn-light">
+                        <i class="bi bi-arrow-left"></i> Check Another URL
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
