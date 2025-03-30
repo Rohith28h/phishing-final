@@ -83,23 +83,11 @@ def is_whitelisted_domain(domain):
             
     return False
 
-# Simple in-memory cache to avoid repeated content analyses
-_content_cache = {}
-
 def analyze_website_content(url):
     """
     Analyze the content of a website to determine if it's likely a phishing site.
     Returns a dictionary of content-based features.
-    
-    This function uses caching to improve response time for previously analyzed URLs.
     """
-    # Check cache first
-    if url in _content_cache:
-        cache_entry, timestamp = _content_cache[url]
-        # Cache valid for 30 minutes
-        from datetime import datetime, timedelta
-        if datetime.utcnow() - timestamp < timedelta(minutes=30):
-            return cache_entry
     content_features = {
         'login_form_present': False,
         'password_field_present': False,
@@ -175,11 +163,6 @@ def analyze_website_content(url):
                         break
                         
         logging.info(f"Content analysis for {url}: {content_features}")
-        
-        # Store in cache to speed up future requests
-        from datetime import datetime
-        _content_cache[url] = (content_features, datetime.utcnow())
-        
         return content_features
         
     except Exception as e:

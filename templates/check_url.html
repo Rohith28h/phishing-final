@@ -16,7 +16,7 @@
                 {% endif %}
                 {% endwith %}
                 
-                <form method="post" id="urlCheckForm" novalidate>
+                <form method="post" novalidate>
                     {{ form.hidden_tag() }}
                     
                     <div class="mb-3">
@@ -28,29 +28,9 @@
                     </div>
                     
                     <div class="text-center">
-                        {{ form.submit(class="btn btn-primary", id="submitButton") }}
+                        {{ form.submit(class="btn btn-primary") }}
                     </div>
                 </form>
-                
-                <!-- Loading spinner -->
-                <div class="loading-spinner mt-4" id="loadingSpinner" style="display: none;">
-                    <div class="d-flex justify-content-center">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <p class="text-center mt-2">Analyzing URL, please wait...</p>
-                </div>
-                
-                <script>
-                    // Show spinner when form is submitted
-                    document.getElementById('urlCheckForm').addEventListener('submit', function() {
-                        if (this.checkValidity()) {
-                            document.getElementById('loadingSpinner').style.display = 'block';
-                            document.getElementById('submitButton').disabled = true;
-                        }
-                    });
-                </script>
             </div>
         </div>
     </div>

@@ -1,14 +1,12 @@
 import os
 import logging
-import time
-import functools
 from urllib.parse import urlparse
-from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, send_from_directory
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import DeclarativeBase
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -51,36 +49,6 @@ from machine_learning.ensemble_model import EnsembleModel
 
 # Initialize machine learning model
 phishing_detector = EnsembleModel()
-
-# Simple cache implementation for improved performance
-_cache = {}
-
-def cache_result(func):
-    """Decorator to cache function results for improved performance"""
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        cache_key = f"{func.__name__}:{str(args)}:{str(kwargs)}"
-        
-        # Check if result is in cache and not expired
-        if cache_key in _cache:
-            result, timestamp = _cache[cache_key]
-            # Cache results for 15 minutes
-            if datetime.utcnow() - timestamp < timedelta(minutes=15):
-                app.logger.debug(f"Cache hit for {func.__name__}")
-                return result
-        
-        # Call the original function
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        execution_time = time.time() - start_time
-        
-        # Only cache if execution time is significant (over 200ms)
-        if execution_time > 0.2:
-            app.logger.debug(f"Caching result for {func.__name__} (took {execution_time:.2f}s)")
-            _cache[cache_key] = (result, datetime.utcnow())
-        
-        return result
-    return wrapper
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -138,7 +106,6 @@ def logout():
 
 @app.route('/check_url', methods=['GET', 'POST'])
 @login_required
-@cache_result
 def check_url():
     form = URLCheckForm()
     if form.validate_on_submit():
@@ -238,7 +205,6 @@ def check_url():
 
 @app.route('/analyze', methods=['POST'])
 @login_required
-@cache_result
 def analyze():
     url = request.form.get('url')
     if not url:
@@ -346,7 +312,6 @@ def create_tables():
 # API endpoint for external service integration
 @app.route('/api/analyze', methods=['POST'])
 @login_required
-@cache_result
 def api_analyze():
     data = request.get_json()
     
