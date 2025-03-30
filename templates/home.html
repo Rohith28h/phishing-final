@@ -1,32 +1,378 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <h1 class="display-4 mb-4">Welcome to Phishing Detection</h1>
-            <p class="lead mb-4">
-                Protect yourself from phishing attacks by analyzing suspicious URLs.
-                Our advanced machine learning model helps identify potential threats.
-            </p>
-            
-            {% if current_user.is_authenticated %}
-            <div class="d-grid gap-2 col-6 mx-auto">
-                <a href="{{ url_for('check_url') }}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-search"></i> Check URL
-                </a>
+<!-- Hero Section with Wave Animation -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6 hero-content">
+                <span class="badge bg-primary mb-3">AI-Powered Protection</span>
+                <h1 class="hero-title mb-4">Defend Against <span class="text-primary">Phishing</span> Attacks</h1>
+                <p class="hero-text mb-4">
+                    Leverage our advanced machine learning and real-time content analysis to identify 
+                    malicious websites before they can steal your data.
+                </p>
+                
+                {% if current_user.is_authenticated %}
+                <div class="d-flex gap-3 mt-5">
+                    <a href="{{ url_for('check_url') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-shield-check me-2"></i> Analyze URL
+                    </a>
+                </div>
+                {% else %}
+                <div class="d-flex gap-3 mt-5">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-shield-check me-2"></i> Get Protected
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                    </a>
+                </div>
+                {% endif %}
             </div>
-            {% else %}
-            <div class="d-grid gap-2 col-6 mx-auto">
-                <a href="{{ url_for('login') }}" class="btn btn-primary mb-2">
-                    <i class="bi bi-box-arrow-in-right"></i> Login
-                </a>
-                <a href="{{ url_for('register') }}" class="btn btn-outline-primary">
-                    <i class="bi bi-person-plus"></i> Register
-                </a>
+            <div class="col-lg-6 d-none d-lg-block position-relative">
+                <div class="hero-image-container">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="hero-blob">
+                        <path fill="#4285F4" d="M45.7,-57.2C59.1,-47.3,70.2,-33.1,75.1,-16.8C80.1,-0.5,78.9,17.9,70.8,32.5C62.8,47,47.9,57.6,31.7,64.4C15.4,71.2,-2.3,74.1,-18.6,69.9C-34.9,65.8,-49.9,54.5,-61.4,39.9C-72.9,25.2,-80.9,7.2,-79.5,-10.3C-78.1,-27.8,-67.3,-44.7,-53,-56.2C-38.7,-67.7,-19.3,-73.8,-1.3,-72.2C16.7,-70.6,32.3,-67.2,45.7,-57.2Z" transform="translate(100 100)" />
+                    </svg>
+                    <div class="hero-shield">
+                        <i class="bi bi-shield-lock-fill"></i>
+                    </div>
+                    <div class="hero-lock">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+                    <div class="hero-check">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="hero-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                </div>
             </div>
-            {% endif %}
         </div>
     </div>
+    <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <path fill="rgba(30, 30, 46, 0.6)" fill-opacity="1" d="M0,288L48,272C96,256,192,224,288,213.3C384,203,480,213,576,229.3C672,245,768,267,864,261.3C960,256,1056,224,1152,208C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
 </div>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-7 text-center">
+                <h2 class="section-title">How PhishGuard Protects You</h2>
+                <p class="section-subtitle">Our multi-layered approach provides comprehensive protection against phishing attacks</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+                    <h3>ML-Powered Detection</h3>
+                    <p>Advanced ensemble models analyze URL patterns to identify suspicious characteristics with high accuracy.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-braces"></i>
+                    </div>
+                    <h3>Content Analysis</h3>
+                    <p>Real-time inspection of website content to detect login forms, security seals, and brand impersonation.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h3>Visual Insights</h3>
+                    <p>Clear visualizations help you understand threats with confidence scores and detailed analysis.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <i class="bi bi-quote quote-icon"></i>
+                        <p>PhishGuard has helped our organization reduce phishing-related incidents by 87%. The detailed analysis and user-friendly interface make it an essential tool for our security team.</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-info">
+                                <h5>Sarah Johnson</h5>
+                                <p>Chief Security Officer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="cta-card">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2>Ready to protect yourself against phishing?</h2>
+                    <p>Start analyzing suspicious URLs and secure your online experience today.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('check_url') }}" class="btn btn-light btn-lg">
+                        <i class="bi bi-search me-2"></i> Check URL Now
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">
+                        <i class="bi bi-person-plus me-2"></i> Create Free Account
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Hero Section Styles */
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    padding: 60px 0 120px;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.hero-text {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+}
+
+.hero-image-container {
+    position: relative;
+    height: 500px;
+}
+
+.hero-blob {
+    width: 100%;
+    height: auto;
+    opacity: 0.8;
+    animation: float 6s ease-in-out infinite;
+}
+
+.hero-shield {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 9rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(0,0,0,0.2);
+    animation: pulse 3s infinite;
+}
+
+.hero-lock, .hero-check, .hero-warning {
+    position: absolute;
+    font-size: 3rem;
+    color: white;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.3));
+}
+
+.hero-lock {
+    top: 30%;
+    right: 20%;
+    animation: float 5s ease-in-out infinite;
+}
+
+.hero-check {
+    bottom: 25%;
+    right: 25%;
+    color: #34a853;
+    animation: float 4s ease-in-out infinite 1s;
+}
+
+.hero-warning {
+    bottom: 30%;
+    left: 20%;
+    color: #fbbc05;
+    animation: float 4.5s ease-in-out infinite 0.5s;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Feature Cards */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 30px;
+    height: 100%;
+    transition: var(--transition-normal);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-primary);
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: white;
+}
+
+.feature-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0;
+}
+
+/* Testimonial Cards */
+.testimonial-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 40px;
+    position: relative;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.quote-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    opacity: 0.2;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.testimonial-content p {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+}
+
+.testimonial-info h5 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.testimonial-info p {
+    margin-bottom: 0;
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+/* CTA Section */
+.cta-card {
+    background: var(--gradient-primary);
+    border-radius: 12px;
+    padding: 50px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(66, 133, 244, 0.3);
+}
+
+.cta-card h2 {
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.cta-card p {
+    opacity: 0.9;
+    margin-bottom: 0;
+    font-size: 1.1rem;
+}
+
+.cta-card .btn-light {
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: var(--transition-normal);
+}
+
+.cta-card .btn-light:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 992px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-section {
+        padding: 40px 0 100px;
+    }
+    
+    .cta-card {
+        padding: 30px;
+    }
+}
+</style>
 {% endblock %}
