@@ -201,7 +201,7 @@
                 </div>
 
                 <div class="text-center">
-                    <a href="{{ url_for('check_url') }}" class="btn btn-light">
+                    <a href="{{ url_for('check_url', redirect=True, _='no_cache_' + range(1, 1000)|random) }}" class="btn btn-light">
                         <i class="bi bi-arrow-left"></i> Check Another URL
                     </a>
                 </div>

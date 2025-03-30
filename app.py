@@ -59,6 +59,14 @@ def cache_result(func):
     """Decorator to cache function results for improved performance"""
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        # Skip caching for POST requests that lead to redirects
+        if request.method == "POST" and func.__name__ in ["check_url"]:
+            return func(*args, **kwargs)
+            
+        # Skip caching for redirects and form submissions
+        if request.args.get('redirect') or request.form:
+            return func(*args, **kwargs)
+            
         cache_key = f"{func.__name__}:{str(args)}:{str(kwargs)}"
         
         # Check if result is in cache and not expired
@@ -75,7 +83,8 @@ def cache_result(func):
         execution_time = time.time() - start_time
         
         # Only cache if execution time is significant (over 200ms)
-        if execution_time > 0.2:
+        # And don't cache redirects
+        if execution_time > 0.2 and not isinstance(result, type(redirect('/'))):
             app.logger.debug(f"Caching result for {func.__name__} (took {execution_time:.2f}s)")
             _cache[cache_key] = (result, datetime.utcnow())
         
