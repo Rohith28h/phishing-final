@@ -142,7 +142,7 @@ def check_url():
                         suspicious_indicators += 2
                         app.logger.warning(f"Suspicious: Login form with brand mismatch on {url}")
                     
-                    if content_features['password_field_present'] and not url.startswith('https'):
+                    if content_features['password_field_present'] and not url.lower().startswith('https'):
                         suspicious_indicators += 2
                         app.logger.warning(f"Suspicious: Password field without HTTPS on {url}")
                         
@@ -245,7 +245,7 @@ def analyze():
                     suspicious_indicators += 2
                     app.logger.warning(f"Suspicious: Login form with brand mismatch on {url}")
                 
-                if content_features['password_field_present'] and not url.startswith('https'):
+                if content_features['password_field_present'] and not url.lower().startswith('https'):
                     suspicious_indicators += 2
                     app.logger.warning(f"Suspicious: Password field without HTTPS on {url}")
                     
@@ -357,7 +357,7 @@ def api_analyze():
                 if content_features['login_form_present'] and content_features['brand_mismatch']:
                     suspicious_indicators += 2
                 
-                if content_features['password_field_present'] and not url.startswith('https'):
+                if content_features['password_field_present'] and not url.lower().startswith('https'):
                     suspicious_indicators += 2
                     
                 if content_features['ssl_seal_present'] and not content_features['security_indicators']:
