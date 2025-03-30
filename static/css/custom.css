@@ -1,231 +1,263 @@
-/* Additional custom styles */
+/* 
+ * Phishing Detection System - Custom Stylesheet
+ * Enhanced UI with animations, risk level badges, and better feature visualization
+ */
 
-/* Styles for phishing warning page */
-.phishing-warning {
-    background-color: #dc3545;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-    margin-bottom: 20px;
-}
-
-.phishing-warning h2 {
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.phishing-warning .alert {
-    margin-bottom: 20px;
-    border-left: 4px solid #ffb700;
+/* ====== General Styling ====== */
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    transition: background-color 0.3s ease;
 }
 
 .card {
-    border-radius: 10px;
-    border: 1px solid var(--bs-border-color);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .card-header {
-    background-color: var(--bs-dark);
-    border-bottom: 1px solid var(--bs-border-color);
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    background-color: #343a40;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
 }
 
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: var(--bs-dark);
-    border-top: 1px solid var(--bs-border-color);
-    padding: 15px 0;
-    z-index: 1000;
+/* ====== Navigation Styling ====== */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-main {
-    margin-bottom: 100px;
-    padding-top: 20px;
-}
-
-.table {
-    background-color: var(--bs-dark);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* Animated security icon */
-.security-icon {
-    animation: pulse 2s infinite;
-    font-size: 3.5rem;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.1);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Custom card for results */
-.result-card {
-    transition: all 0.3s ease;
-    margin-bottom: 25px;
-    overflow: hidden;
-}
-
-.result-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* Safe result indicator */
-.safe-indicator {
-    color: #28a745;
-    text-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
-    font-size: 1.2em;
-    font-weight: bold;
-    display: inline-block;
-    margin-right: 8px;
-}
-
-/* Phishing result indicator */
-.phishing-indicator {
-    color: #dc3545;
-    text-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
-    font-size: 1.2em;
-    font-weight: bold;
-    display: inline-block;
-    margin-right: 8px;
-}
-
-/* Analysis timestamp */
-.analysis-time {
-    display: block;
-    font-size: 0.9em;
-    color: #6c757d;
-    margin-top: 10px;
-    margin-bottom: 15px;
-}
-
-/* Risk level badges */
-.badge-risk-high {
-    background-color: #dc3545;
-    color: white;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 20px;
-}
-
-.badge-risk-medium {
-    background-color: #fd7e14;
-    color: white;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 20px;
-}
-
-.badge-risk-low {
-    background-color: #28a745;
-    color: white;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 20px;
-}
-
-/* Feature visualization */
-.feature-indicator {
-    width: 100%;
-    height: 8px;
-    background-color: #e9ecef;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    overflow: hidden;
-}
-
-.feature-indicator-bar {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.5s ease;
-}
-
-.feature-indicator-high {
-    background-color: #dc3545;
-}
-
-.feature-indicator-medium {
-    background-color: #fd7e14;
-}
-
-.feature-indicator-low {
-    background-color: #28a745;
-}
-
-/* Chart container */
-.chart-container {
-    width: 100%;
-    height: 300px;
-    margin-bottom: 20px;
-}
-
-/* Content analysis section */
-.content-analysis-section {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: rgba(0,0,0,0.05);
-}
-
-/* URL display with icon */
-.url-display {
-    word-break: break-all;
-    padding: 12px;
-    border-radius: 6px;
-    background-color: rgba(0,0,0,0.05);
-    margin-bottom: 15px;
+.navbar-brand {
+    font-weight: 700;
     display: flex;
     align-items: center;
 }
 
-.url-icon {
+.navbar-brand i {
     margin-right: 10px;
-    font-size: 1.5em;
+    color: #28a745;
 }
 
-/* Tooltips */
-.feature-tooltip {
-    cursor: help;
-    text-decoration: underline dotted;
+/* ====== Form Elements ====== */
+.form-control {
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #2b3035;
+    color: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Loading indicator for analysis */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    background-color: #3a4047;
+}
+
+.btn {
+    border-radius: 4px;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #375a7f;
+    border-color: #375a7f;
+}
+
+.btn-primary:hover {
+    background-color: #2b4764;
+    border-color: #264059;
+    transform: translateY(-2px);
+}
+
+/* ====== Loading Spinner ====== */
 .loading-spinner {
     display: none;
-    margin: 20px auto;
     text-align: center;
+    margin: 2rem 0;
 }
 
-.loading-spinner.active {
-    display: block;
+/* ====== Risk Indicators ====== */
+.risk-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-align: center;
+    margin: 1rem 0;
+    font-size: 1.1rem;
+    color: white;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
+.risk-high {
+    background-color: #dc3545;
+    border: 2px solid #b02a37;
+}
+
+.risk-medium {
+    background-color: #fd7e14;
+    border: 2px solid #ca6510;
+}
+
+.risk-low {
+    background-color: #20c997;
+    border: 2px solid #1aa179;
+}
+
+/* ====== Result Cards ====== */
+.result-card {
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.result-card.safe {
+    background-color: rgba(32, 201, 151, 0.15);
+    border-left: 5px solid #20c997;
+}
+
+.result-card.danger {
+    background-color: rgba(220, 53, 69, 0.15);
+    border-left: 5px solid #dc3545;
+}
+
+.result-card.warning {
+    background-color: rgba(253, 126, 20, 0.15);
+    border-left: 5px solid #fd7e14;
+}
+
+/* ====== Feature Visualization ====== */
+.feature-table {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+
+.feature-row-bad {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.feature-row-good {
+    background-color: rgba(32, 201, 151, 0.1);
+}
+
+.feature-icon {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+.icon-bad {
+    color: #dc3545;
+}
+
+.icon-good {
+    color: #20c997;
+}
+
+/* ====== Animations ====== */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+.slide-in {
+    transform: translateY(50px);
+    opacity: 0;
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Add animation delay for cascading elements */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* ====== Timestamp Styling ====== */
+.timestamp {
+    font-size: 0.85rem;
+    color: #adb5bd;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* ====== Charts and Visualizations ====== */
+.chart-container {
+    margin: 2rem 0;
+    padding: 1rem;
+    background-color: #343a40;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ====== Feature Details ====== */
+.feature-detail {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.feature-detail:hover {
+    transform: translateX(5px);
+}
+
+.feature-detail-bad {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 3px solid #dc3545;
+}
+
+.feature-detail-good {
+    background-color: rgba(32, 201, 151, 0.1);
+    border-left: 3px solid #20c997;
+}
+
+.feature-detail-neutral {
+    background-color: rgba(108, 117, 125, 0.1);
+    border-left: 3px solid #6c757d;
+}
+
+/* ====== Responsive Adjustments ====== */
+@media (max-width: 768px) {
+    .card-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .risk-badge {
+        font-size: 1rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .feature-detail {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
 }
