@@ -20,12 +20,18 @@ app = Flask(__name__)
 
 # Configuration
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-key-for-testing")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///site.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
 }
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# Custom jinja filters
+@app.template_filter('file_exists')
+def file_exists(filename):
+    """Check if a file exists in the static folder"""
+    return os.path.isfile(os.path.join(app.static_folder, filename))
 
 # Initialize extensions
 db.init_app(app)
@@ -179,7 +185,8 @@ def check_url():
                 'risk_score': "High Risk" if is_phishing else "Low Risk",
                 'features': features,
                 'whitelisted': domain_whitelisted,
-                'content_analysis': content_analysis
+                'content_analysis': content_analysis,
+                'analysis_time': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             }
             
             # Different templates for phishing vs. safe sites
@@ -281,7 +288,8 @@ def analyze():
             'risk_score': "High Risk" if is_phishing else "Low Risk",
             'features': features,
             'whitelisted': domain_whitelisted,
-            'content_analysis': content_analysis
+            'content_analysis': content_analysis,
+            'analysis_time': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
         }
         
         # Different templates for phishing vs. safe sites

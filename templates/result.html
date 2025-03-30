@@ -20,7 +20,13 @@
 
                 <div class="mb-4">
                     <h5>Analyzed URL:</h5>
-                    <p class="text-break">{{ result.url }}</p>
+                    <div class="url-display">
+                        <i class="bi bi-link-45deg url-icon"></i>
+                        <div>
+                            <p class="text-break mb-0">{{ result.url }}</p>
+                            <span class="analysis-time">Analysis performed: {{ result.analysis_time|default('Just now') }}</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-4">
@@ -75,90 +81,171 @@
                     </div>
                 </div>
 
-                {% if result.content_analysis %}
-                <div class="mb-4">
-                    <h5>Content Analysis:</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Indicator</th>
-                                    <th>Status</th>
-                                    <th>Security Implication</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Login Form Present</td>
-                                    <td>
-                                        {% if result.content_analysis.login_form_present %}
-                                        <span class="badge bg-warning text-dark">Yes</span>
+                <div class="row mb-4">
+                    <div class="col-md-7">
+                        {% if result.content_analysis %}
+                        <div class="mb-4">
+                            <h5>Content Analysis:</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Indicator</th>
+                                            <th>Status</th>
+                                            <th>Security Implication</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Login Form Present</td>
+                                            <td>
+                                                {% if result.content_analysis.login_form_present %}
+                                                <span class="badge bg-warning text-dark">Yes</span>
+                                                {% else %}
+                                                <span class="badge bg-success">No</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>Sites with login forms should be scrutinized carefully</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Password Field Present</td>
+                                            <td>
+                                                {% if result.content_analysis.password_field_present %}
+                                                <span class="badge bg-warning text-dark">Yes</span>
+                                                {% else %}
+                                                <span class="badge bg-success">No</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>Password fields should only appear on secure (HTTPS) pages</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SSL/Security Seals</td>
+                                            <td>
+                                                {% if result.content_analysis.ssl_seal_present %}
+                                                <span class="badge bg-info">Present</span>
+                                                {% else %}
+                                                <span class="badge bg-secondary">Absent</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>Presence of security seals may be legitimate or could be fake in phishing sites</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Brand Mismatch</td>
+                                            <td>
+                                                {% if result.content_analysis.brand_mismatch %}
+                                                <span class="badge bg-danger">Detected</span>
+                                                {% else %}
+                                                <span class="badge bg-success">Not Detected</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>When content mentions a brand not in the domain - often a phishing sign</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Security Terms</td>
+                                            <td>
+                                                {% if result.content_analysis.security_indicators %}
+                                                <span class="badge bg-info">Present</span>
+                                                {% else %}
+                                                <span class="badge bg-secondary">Absent</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>Presence of terms like "secure", "protected", or "verified"</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Legitimate External Links</td>
+                                            <td>
+                                                {% if result.content_analysis.legitimate_links %}
+                                                <span class="badge bg-success">Present</span>
+                                                {% else %}
+                                                <span class="badge bg-secondary">Absent</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>Legitimate sites often link to established platforms</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="col-md-5">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Machine Learning Analysis</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-center mb-3">
+                                    <div class="position-relative" style="width: 200px; height: 200px;">
+                                        <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                            <h3 class="mb-0">{{ result.classification_confidence }}</h3>
+                                            <p class="mb-0">Confidence</p>
+                                        </div>
+                                        <svg width="200" height="200" viewBox="0 0 200 200">
+                                            <circle cx="100" cy="100" r="90" fill="none" stroke="#e6e6e6" stroke-width="20"/>
+                                            {% if result.is_phishing %}
+                                            <circle cx="100" cy="100" r="90" fill="none" stroke="#dc3545" stroke-width="20" 
+                                                stroke-dasharray="565.48" stroke-dashoffset="{{ 565.48 - (565.48 * result.classification_confidence|replace('%', '')|float / 100) }}" 
+                                                stroke-linecap="round" transform="rotate(-90 100 100)"/>
+                                            {% else %}
+                                            <circle cx="100" cy="100" r="90" fill="none" stroke="#28a745" stroke-width="20" 
+                                                stroke-dasharray="565.48" stroke-dashoffset="{{ 565.48 - (565.48 * result.classification_confidence|replace('%', '')|float / 100) }}" 
+                                                stroke-linecap="round" transform="rotate(-90 100 100)"/>
+                                            {% endif %}
+                                        </svg>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <p class="fw-bold">
+                                        {% if result.is_phishing %}
+                                        <span class="text-danger">High Risk Classification</span>
                                         {% else %}
-                                        <span class="badge bg-success">No</span>
+                                        <span class="text-success">Low Risk Classification</span>
                                         {% endif %}
-                                    </td>
-                                    <td>Sites with login forms should be scrutinized carefully</td>
-                                </tr>
-                                <tr>
-                                    <td>Password Field Present</td>
-                                    <td>
-                                        {% if result.content_analysis.password_field_present %}
-                                        <span class="badge bg-warning text-dark">Yes</span>
-                                        {% else %}
-                                        <span class="badge bg-success">No</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>Password fields should only appear on secure (HTTPS) pages</td>
-                                </tr>
-                                <tr>
-                                    <td>SSL/Security Seals</td>
-                                    <td>
-                                        {% if result.content_analysis.ssl_seal_present %}
-                                        <span class="badge bg-info">Present</span>
-                                        {% else %}
-                                        <span class="badge bg-secondary">Absent</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>Presence of security seals may be legitimate or could be fake in phishing sites</td>
-                                </tr>
-                                <tr>
-                                    <td>Brand Mismatch</td>
-                                    <td>
-                                        {% if result.content_analysis.brand_mismatch %}
-                                        <span class="badge bg-danger">Detected</span>
-                                        {% else %}
-                                        <span class="badge bg-success">Not Detected</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>When content mentions a brand not in the domain - often a phishing sign</td>
-                                </tr>
-                                <tr>
-                                    <td>Security Terms</td>
-                                    <td>
-                                        {% if result.content_analysis.security_indicators %}
-                                        <span class="badge bg-info">Present</span>
-                                        {% else %}
-                                        <span class="badge bg-secondary">Absent</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>Presence of terms like "secure", "protected", or "verified"</td>
-                                </tr>
-                                <tr>
-                                    <td>Legitimate External Links</td>
-                                    <td>
-                                        {% if result.content_analysis.legitimate_links %}
-                                        <span class="badge bg-success">Present</span>
-                                        {% else %}
-                                        <span class="badge bg-secondary">Absent</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>Legitimate sites often link to established platforms</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    </p>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <h6>AI-Powered Decision:</h6>
+                                    <p>Our enhanced AI model analyzed this URL with advanced machine learning algorithms to determine its safety level.</p>
+                                    
+                                    <div class="d-flex justify-content-between small text-muted mt-3">
+                                        <span>Model: Enhanced Ensemble</span>
+                                        <span>Analysis Time: {{ result.analysis_time|default('Just now') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                {% endif %}
+                
+                <!-- Model Feature Importance -->
+                <div class="mb-4">
+                    <h5>Feature Importance Analysis</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% if 'static/img/feature_importance.png'|file_exists %}
+                            <img src="{{ url_for('static', filename='img/feature_importance.png') }}" class="img-fluid border rounded" 
+                                alt="Feature Importance Chart">
+                            {% else %}
+                            <div class="alert alert-info">
+                                Feature importance chart will be available after model training.
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {% if 'static/img/model_weights.png'|file_exists %}
+                            <img src="{{ url_for('static', filename='img/model_weights.png') }}" class="img-fluid border rounded" 
+                                alt="Model Weights Chart">
+                            {% else %}
+                            <div class="alert alert-info">
+                                Model weights chart will be available after model training.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
                 <div class="text-center">
                     <a href="{{ url_for('check_url') }}" class="btn btn-primary">

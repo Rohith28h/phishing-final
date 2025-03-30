@@ -15,17 +15,47 @@
 
                 <div class="mb-4">
                     <h5>Analyzed URL:</h5>
-                    <p class="text-break">{{ result.url }}</p>
+                    <div class="url-display">
+                        <i class="bi bi-shield-exclamation url-icon"></i>
+                        <div>
+                            <p class="text-break mb-0">{{ result.url }}</p>
+                            <span class="analysis-time">Analysis performed: {{ result.analysis_time|default('Just now') }}</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="mb-4">
-                    <h5>Risk Score:</h5>
-                    <p>{{ result.risk_score }}</p>
-                </div>
-
-                <div class="mb-4">
-                    <h5>Classification Confidence:</h5>
-                    <p>{{ result.classification_confidence }}</p>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">Risk Assessment</h5>
+                            </div>
+                            <div class="card-body">
+                                <h4><span class="badge-risk-high">{{ result.risk_score }}</span></h4>
+                                <p class="mt-3">This URL has high-risk characteristics typically associated with phishing websites.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">Classification Confidence</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="position-relative" style="width: 150px; height: 150px; margin: 0 auto;">
+                                    <div class="position-absolute top-50 start-50 translate-middle text-center">
+                                        <h3 class="mb-0">{{ result.classification_confidence }}</h3>
+                                    </div>
+                                    <svg width="150" height="150" viewBox="0 0 150 150">
+                                        <circle cx="75" cy="75" r="65" fill="none" stroke="#e6e6e6" stroke-width="15"/>
+                                        <circle cx="75" cy="75" r="65" fill="none" stroke="#dc3545" stroke-width="15" 
+                                            stroke-dasharray="408.41" stroke-dashoffset="{{ 408.41 - (408.41 * result.classification_confidence|replace('%', '')|float / 100) }}" 
+                                            stroke-linecap="round" transform="rotate(-90 75 75)"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="mb-4">
