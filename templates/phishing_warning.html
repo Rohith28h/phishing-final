@@ -1,18 +1,62 @@
 {% extends "base.html" %}
 
+{#
+PHISHING WARNING TEMPLATE
+=========================
+Displays a warning message when a phishing website is detected.
+Features:
+- Risk assessment
+- URL analysis results
+- Content-based detection results
+- Recommendations for users
+#}
+
 {% block content %}
+<!-- 
+WARNING CONTAINER
+-----------------
+Centered layout for the warning message:
+- Header with alert icon
+- Risk assessment card
+- Classification confidence visualization
+- Feature analysis table
+- Recommendations for users
+-->
 <div class="row justify-content-center">
     <div class="col-md-10">
-        <div class="card result-card phishing-warning">
+            <!-- 
+            WARNING CARD
+            -------------
+            Contains:
+            - Header with warning message
+            - Body with analysis results
+            - Recommendations
+            -->
+            <div class="card result-card phishing-warning">
+            <!-- 
+            CARD HEADER
+            -----------
+            Displays the warning title
+            -->
             <div class="card-header">
                 <h2 class="text-center">⚠️ WARNING: This is a Phishing Website!</h2>
             </div>
             <div class="card-body">
+                <!-- 
+                ALERT MESSAGE
+                -------------
+                Displays the main warning message about the detected phishing URL
+                -->
                 <div class="alert alert-danger" role="alert">
                     <h4 class="alert-heading">Potential Phishing URL Detected!</h4>
                     <p>This URL has been identified as likely malicious. Please exercise caution.</p>
                 </div>
 
+                <!-- 
+                ANALYZED URL DISPLAY
+                ---------------------
+                Shows the URL that was analyzed along with the analysis time
+                -->
                 <div class="mb-4">
                     <h5>Analyzed URL:</h5>
                     <div class="url-display">
@@ -24,6 +68,11 @@
                     </div>
                 </div>
 
+                <!-- 
+                RISK ASSESSMENT AND CLASSIFICATION
+                ------------------------------------
+                Displays risk score and classification confidence
+                -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="card mb-3">
@@ -58,6 +107,11 @@
                     </div>
                 </div>
 
+                <!-- 
+                FEATURE ANALYSIS
+                -----------------
+                Table displaying various features of the URL and their values
+                -->
                 <div class="mb-4">
                     <h5>Feature Analysis:</h5>
                     <div class="table-responsive">
@@ -110,6 +164,11 @@
                     </div>
                 </div>
 
+                <!-- 
+                CONTENT-BASED DETECTION RESULTS
+                ---------------------------------
+                Displays results of content analysis if available
+                -->
                 {% if result.content_analysis %}
                 <div class="mb-4">
                     <h5>Content-Based Detection Results:</h5>
@@ -184,6 +243,11 @@
                 </div>
                 {% endif %}
 
+                <!-- 
+                RECOMMENDATIONS
+                ----------------
+                Provides safety recommendations for users
+                -->
                 <div class="alert alert-warning">
                     <h5>Recommendations:</h5>
                     <ul>

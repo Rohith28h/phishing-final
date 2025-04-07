@@ -14,8 +14,30 @@ import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+"""
+Phishing Detection Ensemble Model
+
+This class combines multiple machine learning models to detect phishing websites:
+1. Random Forest - Robust against overfitting, handles non-linear relationships
+2. SVM - Effective for high-dimensional data
+3. Logistic Regression - Provides probability estimates
+4. Neural Network - Learns complex patterns
+5. Gradient Boosting - Sequential error correction
+
+The ensemble uses weighted voting to combine predictions for better accuracy.
+"""
 class EnsembleModel:
     def __init__(self):
+        """
+        Initialize ensemble with 5 machine learning models:
+        - Random Forest (primary model, 30% weight)
+        - SVM (20% weight) 
+        - Logistic Regression (10% weight)
+        - Neural Network (20% weight)
+        - Gradient Boosting (20% weight)
+        
+        Models are configured with optimized hyperparameters and class balancing.
+        """
         # Improved Random Forest with more estimators and better hyperparameters
         self.rf_model = RandomForestClassifier(
             n_estimators=200, 
@@ -95,7 +117,21 @@ class EnsembleModel:
         self._load_models()
     
     def _load_models(self):
-        """Try to load pre-trained models or use default weights if not found"""
+        """
+        Attempt to load pre-trained models from disk.
+        Falls back to training with defaults if models not found.
+        
+        Models are stored in:
+        - machine_learning/models/rf_model.pkl
+        - machine_learning/models/svm_model.pkl  
+        - machine_learning/models/lr_model.pkl
+        - machine_learning/models/nn_model.pkl
+        - machine_learning/models/gb_model.pkl
+        
+        Also loads:
+        - StandardScaler (scaler.pkl)
+        - FeatureSelector (feature_selector.pkl)
+        """
         try:
             # Load RF model
             with open('machine_learning/models/rf_model.pkl', 'rb') as f:
@@ -117,7 +153,28 @@ class EnsembleModel:
             self._train_with_defaults()
     
     def _train_with_defaults(self):
-        """Train models with default dataset if no models are found"""
+        """
+        Train models using default phishing dataset (phishcoop.csv).
+        
+        Training process:
+        1. Load and preprocess data
+        2. Split into train/test sets (75/25)
+        3. Scale features using StandardScaler
+        4. Select important features using RandomForest
+        5. Train all 5 models in parallel
+        6. Evaluate ensemble performance on test set
+        7. Save trained models and artifacts
+        
+        Metrics tracked:
+        - Accuracy
+        - Precision
+        - Recall 
+        - F1 Score
+        
+        Also generates:
+        - Feature importance visualization
+        - Model weights visualization
+        """
         try:
             # Try to load the phishing dataset
             data_path = 'attached_assets/phishcoop.csv'
@@ -126,20 +183,29 @@ class EnsembleModel:
                 df = pd.read_csv(data_path)
                 
                 if df is not None and not df.empty:
-                    # Extract features and target
+                    # Prepare features (X) and target (y)
+                    # Drop non-feature columns and handle potential missing columns
                     X = df.drop(['id', 'Result'], axis=1, errors='ignore')
                     y = df['Result']
+                    
                     if y is not None:
-                        # Store feature names
+                        # Store original feature names for reference
                         self.feature_names = X.columns.tolist()
                         
-                        # Split the data
+                        # Split into training (75%) and test (25%) sets
+                        # Using fixed random_state for reproducibility
                         X_train, X_test, y_train, y_test = train_test_split(
-                            X, y, test_size=0.25, random_state=42
+                            X, y, 
+                            test_size=0.25, 
+                            random_state=42,  # Fixed seed for consistent splits
+                            stratify=y       # Maintain class balance in splits
                         )
                         
-                        # Apply feature scaling
+                        # Standardize features by removing mean and scaling to unit variance
+                        # Fit scaler only on training data to avoid data leakage
                         self.scaler.fit(X_train)
+                        
+                        # Transform both training and test data
                         X_train_scaled = self.scaler.transform(X_train)
                         X_test_scaled = self.scaler.transform(X_test)
                         
@@ -240,61 +306,128 @@ class EnsembleModel:
             # Just continue with untrained models
             
     def _generate_feature_importance_chart(self):
-        """Generate and save feature importance chart"""
+        """
+        Create visualizations of model insights.
+        
+        Generates:
+        1. Feature importance chart (top 10 features)
+        2. Model weights pie chart
+        
+        Saves to:
+        - static/img/feature_importance.png
+        - static/img/model_weights.png
+        
+        Uses:
+        - Random Forest feature importances
+        - Configured model weights
+        """
         try:
-            # Create the static directory if it doesn't exist
+            # Ensure output directory exists (create if needed)
             os.makedirs('static/img', exist_ok=True)
             
-            # Use Random Forest feature importances
+            # Generate feature importance plot if available
             if hasattr(self.rf_model, 'feature_importances_') and self.feature_names:
-                # Get top 10 features by importance
+                # Get sorted feature importances (descending order)
                 importances = self.rf_model.feature_importances_
-                indices = np.argsort(importances)[::-1][:10]  # Top 10 features
+                indices = np.argsort(importances)[::-1][:10]  # Indices of top 10 features
                 
+                # Configure plot aesthetics
                 plt.figure(figsize=(10, 6))
-                sns.barplot(x=importances[indices], y=[self.feature_names[i] for i in indices])
-                plt.title('Top 10 Feature Importance for Phishing Detection')
-                plt.xlabel('Relative Importance')
+                sns.set_style("whitegrid")
+                
+                # Create horizontal bar plot of top features
+                sns.barplot(
+                    x=importances[indices], 
+                    y=[self.feature_names[i] for i in indices],
+                    palette="viridis"
+                )
+                
+                # Add plot labels and formatting
+                plt.title('Top 10 Most Important Phishing Detection Features', pad=20)
+                plt.xlabel('Relative Importance Score', labelpad=10)
+                plt.ylabel('Feature Name', labelpad=10)
                 plt.tight_layout()
-                plt.savefig('static/img/feature_importance.png')
+                
+                # Save and close plot
+                plt.savefig('static/img/feature_importance.png', dpi=300, bbox_inches='tight')
                 plt.close()
+                logging.info("Saved feature importance visualization")
                 
-                logging.info("Feature importance chart saved to static/img/feature_importance.png")
-                
-                # Create pie chart of model weights
+                # Create model weights visualization
                 plt.figure(figsize=(8, 8))
-                plt.pie(list(self.model_weights.values()), labels=list(self.model_weights.keys()), 
-                       autopct='%1.1f%%', startangle=90)
-                plt.axis('equal')
-                plt.title('Model Weights in Ensemble')
-                plt.savefig('static/img/model_weights.png')
+                plt.pie(
+                    list(self.model_weights.values()),
+                    labels=list(self.model_weights.keys()),
+                    autopct='%1.1f%%',
+                    startangle=90,
+                    colors=sns.color_palette("pastel"),
+                    textprops={'fontsize': 12}
+                )
+                plt.title('Ensemble Model Voting Weights', pad=20)
+                plt.savefig('static/img/model_weights.png', dpi=300, bbox_inches='tight')
                 plt.close()
-                
-                logging.info("Model weights chart saved to static/img/model_weights.png")
+                logging.info("Saved model weights visualization")
         except Exception as e:
             logging.error(f"Error generating feature importance chart: {e}")
             # Continue without the chart
 
     def _prepare_features(self, features_dict):
-        """Prepare features for prediction"""
+        """
+        Transform raw features into format expected by models.
+        
+        Handles:
+        1. Converting dict to DataFrame
+        2. Ensuring consistent feature order
+        3. Adding missing features with default values
+        4. Selecting only features used during training
+        
+        Args:
+            features_dict (dict): Raw features from URL analysis
+            
+        Returns:
+            pd.DataFrame: Processed features ready for prediction
+        """
         # Convert dictionary to DataFrame with one row
+        # Using list wrapping to create single-row DataFrame
         df = pd.DataFrame([features_dict])
         
-        # If we have feature names from training, ensure consistent order
+        # Maintain consistent feature order if we have training feature names
         if self.feature_names:
-            # Add missing features as -1 (default value for missing feature)
+            # Add any missing features with -1 (indicates missing value)
+            # This ensures all expected features are present for prediction
             for feature in self.feature_names:
                 if feature not in df.columns:
-                    df[feature] = -1
+                    df[feature] = -1  # -1 is our standard missing value indicator
             
-            # Select only the features used during training, in the same order
+            # Reorder columns to match training feature order exactly
+            # This is critical for models expecting specific feature sequences
             df = df[self.feature_names]
         
         return df
 
     def predict(self, features_dict):
         """
-        Make a prediction with the enhanced ensemble model
+        Make phishing prediction using weighted ensemble of models.
+        
+        Prediction workflow:
+        1. Check if models are trained (load or train if needed)
+        2. Prepare input features (scale and select)
+        3. Get probability predictions from each model
+        4. Combine predictions using configured weights
+        5. Return final prediction with confidence and explanations
+        
+        Args:
+            features_dict (dict): URL features from feature_processor.py
+                Expected keys match feature_names from training
+            
+        Returns:
+            tuple: (is_phishing, confidence, feature_importance)
+            - is_phishing (bool): True if URL is classified as phishing
+            - confidence (float): Prediction confidence 0-100%
+            - feature_importance (dict): {
+                'top_features': {feature: importance},
+                'model_performance': {metric: score} 
+              }
         
         Args:
             features_dict: Dictionary of features extracted from URL
@@ -336,16 +469,19 @@ class EnsembleModel:
             svm_pred = self.svm_model.predict_proba(X_processed)[0]
             lr_pred = self.lr_model.predict_proba(X_processed)[0]
             
-            # Get predictions from new models if they exist
+            # Get predictions from neural network if available
             if hasattr(self, 'nn_model') and self.nn_model is not None:
                 nn_pred = self.nn_model.predict_proba(X_processed)[0]
             else:
-                nn_pred = rf_pred  # Fallback to RF if NN not available
+                # Fallback to random forest predictions if neural network unavailable
+                nn_pred = rf_pred  
                 
+            # Get predictions from gradient boosting if available  
             if hasattr(self, 'gb_model') and self.gb_model is not None:
                 gb_pred = self.gb_model.predict_proba(X_processed)[0]
             else:
-                gb_pred = rf_pred  # Fallback to RF if GB not available
+                # Fallback to random forest predictions if gradient boosting unavailable
+                gb_pred = rf_pred  
             
             # Combine predictions with optimized weights
             ensemble_proba = (

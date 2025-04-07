@@ -1,11 +1,41 @@
 {% extends "base.html" %}
 
+{#
+URL SCANNER TEMPLATE
+====================
+Main interface for URL analysis with features:
+- URL input form with validation
+- Loading state during analysis
+- Feature highlights
+- How-it-works explanation
+- Responsive design for all devices
+#}
+
 {% block content %}
+<!-- 
+SCANNER CONTAINER
+-----------------
+Main wrapper for all scanner components:
+- Header with icon and title
+- Form section
+- Loading indicator
+- Feature highlights
+- Information section
+-->
 <div class="scanner-section">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="scanner-card">
+                    <!-- 
+                    SCANNER HEADER
+                    --------------
+                    Contains:
+                    - Security shield icon with animation
+                    - Main title
+                    - Subtitle explaining the functionality
+                    - Gradient background
+                    -->
                     <div class="scanner-header">
                         <div class="scanner-icon">
                             <i class="bi bi-shield-check"></i>
@@ -14,6 +44,15 @@
                         <p class="scanner-subtitle">Enter a URL to analyze for potential phishing threats using our advanced AI model</p>
                     </div>
                     
+                    <!-- 
+                    SCANNER BODY
+                    ------------
+                    Contains:
+                    - Flash message display
+                    - URL input form
+                    - Form validation messages
+                    - Submit button with hover effects
+                    -->
                     <div class="scanner-body">
                         {% with messages = get_flashed_messages() %}
                         {% if messages %}
@@ -56,6 +95,14 @@
                             </div>
                         </form>
                         
+                        <!-- 
+                        LOADING INDICATOR
+                        -----------------
+                        Shown during URL analysis:
+                        - Animated spinner
+                        - Status message
+                        - Hidden by default
+                        -->
                         <div class="loading-spinner" id="scanner-loading">
                             <div class="spinner-border" role="status">
                                 <span class="visually-hidden">Loading...</span>
@@ -64,6 +111,14 @@
                         </div>
                     </div>
                     
+                    <!-- 
+                    FEATURE HIGHLIGHTS
+                    ------------------
+                    Three-column layout showing:
+                    - ML detection capabilities
+                    - Content analysis features
+                    - Visualization benefits
+                    -->
                     <div class="scanner-features">
                         <div class="row g-4">
                             <div class="col-md-4">
@@ -91,6 +146,13 @@
                     </div>
                 </div>
                 
+                <!-- 
+                HOW IT WORKS CARD
+                -----------------
+                Explanation of the analysis process:
+                - Technical overview
+                - Security badge for trust indicator
+                -->
                 <div class="scanner-info-card mt-4">
                     <div class="row align-items-center g-4">
                         <div class="col-md-8">
@@ -110,6 +172,15 @@
     </div>
 </div>
 
+{#
+PAGE STYLES
+-----------
+Scoped styles for this template including:
+- Card layouts and animations
+- Form styling and validation
+- Responsive breakpoints
+- Loading spinner effects
+#}
 <style>
 .scanner-section {
     padding: 40px 0;
@@ -297,6 +368,13 @@
 }
 </style>
 
+{#
+CLIENT-SIDE SCRIPTS
+-------------------
+Handles:
+- Form submission loading state
+- DOM manipulation for UX improvements
+#}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('url-scan-form');

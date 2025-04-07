@@ -1,4 +1,18 @@
-/* Global settings */
+/**
+ * Phishing Detection App - Main Stylesheet
+ * ========================================
+ * 
+ * This file contains all custom CSS styles for the phishing detection web application.
+ * It includes:
+ * - Color variables and design system
+ * - Base element styling
+ * - Component styles (cards, forms, navigation)
+ * - Specialized phishing detection UI elements
+ * - Animations and transitions
+ * - Responsive design rules
+ */
+
+/* Global Design System */
 :root {
     /* Main colors */
     --primary-color: #4285f4;

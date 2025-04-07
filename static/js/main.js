@@ -1,6 +1,21 @@
-// Add any client-side functionality here
+/**
+ * Phishing Detection App - Main JavaScript
+ * ========================================
+ * 
+ * This file contains all client-side functionality for the phishing detection web application.
+ * It includes:
+ * - Form validation and submission handling
+ * - UI interaction enhancements
+ * - Feature analysis table highlighting
+ * - Event listeners for dynamic elements
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
+    /**
+     * URL Form Validation
+     * ------------------
+     * Prevents form submission if URL field is empty
+     * and shows an alert to the user
+     */
     const urlForm = document.querySelector('form');
     if (urlForm) {
         urlForm.addEventListener('submit', function(e) {
@@ -12,7 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Button effects
+    /**
+     * Button Interaction Effects
+     * -------------------------
+     * Adds visual feedback when hovering over buttons
+     * by toggling shadow classes
+     */
     const buttons = document.querySelectorAll('.btn');
     buttons.forEach(button => {
         button.addEventListener('mouseenter', function() {
@@ -24,7 +44,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Feature table highlighting
+    /**
+     * Feature Analysis Table Highlighting
+     * ----------------------------------
+     * Colors table rows based on feature values:
+     * - 1/1.0 (positive indicators) = green
+     * - -1/-1.0 (negative indicators) = red
+     */
     const featureRows = document.querySelectorAll('table tbody tr');
     featureRows.forEach(row => {
         const valueCell = row.querySelector('td:nth-child(2)');

@@ -1,6 +1,31 @@
+{# 
+Base Template Documentation
+==========================
+This is the foundational template that all other pages inherit from.
+It provides:
+- Consistent page structure and doctype
+- Global head content (CSS, JS, meta tags)
+- Navigation bar with auth state handling  
+- Flash message display system
+- Footer with links and copyright
+- Block definitions for child templates to override
+
+Key Blocks:
+- content: Main page content area
+- Optional: scripts, styles, etc. can be added by child templates
+#}
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
+    {#
+    Head Section
+    ------------
+    Contains:
+    - Character encoding and viewport settings
+    - Page title
+    - CSS stylesheets (Bootstrap, custom, fonts)
+    - Preconnects for performance optimization
+    #}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PhishGuard - Advanced Phishing Detection</title>
@@ -12,7 +37,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Modern Navbar with Glass Effect -->
+    {#
+    Navigation Bar
+    --------------
+    Features:
+    - Responsive collapse behavior
+    - Dynamic links based on auth state
+    - Glass morphism design effect
+    - Branding with icon
+    - User dropdown when logged in
+    #}
     <nav class="navbar navbar-expand-lg navbar-dark glass-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
@@ -67,7 +101,15 @@
         </div>
     </nav>
 
-    <!-- Flash Messages with Improved Design -->
+    {#
+    Flash Messages
+    -------------
+    Displays system messages with:
+    - Category-based styling (success, danger, etc.)
+    - Appropriate icons per message type
+    - Dismissible functionality
+    - Smooth animations
+    #}
     <div class="flash-container container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -90,12 +132,29 @@
         {% endwith %}
     </div>
 
-    <!-- Main Content with Animation -->
+    {#
+    Main Content Area
+    ----------------
+    Primary block for child templates to override
+    Features:
+    - Container with proper spacing
+    - Fade-in animation
+    - Responsive width constraints
+    #}
     <main class="container my-4 fade-in">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Modern Footer with Links -->
+    {#
+    Footer Section
+    -------------
+    Contains:
+    - Site description and branding
+    - Quick links navigation
+    - Legal information
+    - Social media links
+    - Copyright notice
+    #}
     <footer class="footer py-4">
         <div class="container">
             <div class="row gy-3">
@@ -142,7 +201,14 @@
         </div>
     </footer>
 
-    <!-- Scripts -->
+    {#
+    Scripts Section
+    --------------
+    Loads:
+    - Bootstrap JS bundle
+    - Custom JavaScript
+    - Any additional scripts from child templates
+    #}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
